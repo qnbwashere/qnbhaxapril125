@@ -1,0 +1,313 @@
+/* Add to existing styles */
+
+:root {
+  --primary: #BB86FC; /* Purple */
+  --secondary: #3700B3; /* Darker Purple */
+  --background: #121212; /* Dark Gray */
+  --surface: #1E1E1E; /* Slightly Lighter Dark Gray */
+  --text: #FFFFFF; /* White */
+  --accent-color: #BB86FC;
+  --border-color: #512DA8; /* Dark Purple Accent */
+  --neon-glow: 0 0 10px #BB86FC, 0 0 20px #BB86FC;
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+}
+
+.dev-portal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: none;
+  transform: none;
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+  background: var(--surface);
+  padding: 30px;
+  z-index: 10000;
+  display: none;
+  box-sizing: border-box;
+}
+
+.dev-portal-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+  padding: 20px 0;
+}
+
+.dev-portal h2 {
+  margin-top: 0;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--border-color);
+  color: var(--primary);
+}
+
+/* Improve scrolling containers inside dev portal */
+.visitor-log,
+.current-alerts,
+.messages-section {
+  max-height: 400px;
+  overflow-y: auto;
+  background: var(--background);
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  color: var(--text);
+}
+
+.dev-tools {
+  position: sticky;
+  bottom: 0;
+  background: var(--surface);
+  padding: 20px 0;
+  margin-top: 20px;
+  border-top: 2px solid var(--border-color);
+}
+
+.contact-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 15px 25px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.contact-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  background: var(--secondary);
+}
+
+.contact-form-container {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--surface);
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  z-index: 2000;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  animation: popIn 0.3s ease-out;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.contact-form textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.contact-form button {
+  padding: 12px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.contact-form button:hover {
+  background: var(--secondary);
+}
+
+.messages-section {
+  margin-top: 30px;
+  background: var(--background);
+  padding: 20px;
+  border-radius: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  color: var(--text);
+}
+
+.message-item {
+  background: var(--surface);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  animation: fadeIn 0.3s ease;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9em;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.message-content {
+  margin-bottom: 8px;
+}
+
+.message-type {
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.game-preview {
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.game-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.game-card:hover .game-image {
+  transform: scale(1.1);
+}
+
+.game-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(187, 134, 252, 0.2); /* Purple shadow */
+  transition: all 0.3s ease;
+  padding: 15px;
+  text-align: center;
+  animation: fadeInSlide 0.5s ease forwards;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.game-card-title {
+  margin-top: 10px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* Update game grid layout */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+}
+
+.game-grid-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.search-bar {
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--primary);
+}
+
+.game-frame-header {
+  background: var(--surface);
+}
+
+.game-title {
+  color: var(--primary);
+}
+
+.popup-content {
+  background: var(--surface);
+}
+
+.classroom-page {
+  background-color: var(--background);
+  color: var(--text);
+}
+
+.classroom-header {
+  background-color: var(--secondary);
+}
+
+.classroom-game-grid .game-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  color: var(--text);
+}
+
+.alerts-section {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.alert-input {
+  background: var(--background);
+  color: var(--text);
+  border: 1px solid var(--border-color);
+}
+
+.alert-item {
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* Loading Animation */
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--primary);
+  border-left-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.loading-text {
+  color: var(--primary);
+  font-size: 24px;
+  font-family: 'Arial', sans-serif;
+}

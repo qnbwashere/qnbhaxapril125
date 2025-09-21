@@ -1,7 +1,7 @@
-<html><head><base href="https://example.com/">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --primary: #BB86FC; /* Purple */
+  --primary: #8E6BE6; /* toned purple */
   --secondary: #3700B3; /* Darker Purple */
   --background: #121212; /* Dark Gray */
   --surface: #1E1E1E; /* Slightly Lighter Dark Gray */
@@ -12,7 +12,7 @@
 }
 
 body {
-  font-family: 'Roboto', 'Arial', sans-serif;
+  font-family: 'Noto Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   background: var(--background);
   color: var(--text);
   line-height: 1.6;
@@ -672,6 +672,33 @@ canvas {
   background-color: var(--secondary);
   transform: scale(1.05);
 }
+
+.game-card-title {
+  margin-top: 10px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.category-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0,0,0,0.45);
+  color: var(--text);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.section-title {
+  margin-bottom: 20px;
+  color: var(--primary);
+  font-size: 1.5em;
+  text-align: center;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 10px;
+}
 </style>
 <script>
 // Handle mute/unmute messages from parent
@@ -777,7 +804,25 @@ window.addEventListener('message', function(e) {
 <div id="gameCounter"></div>
 
 <div class="game-grid-container">
-  <div class="game-grid" id="gameGrid"></div>
+  <section id="section-emulators">
+    <h3 class="section-title">Emulators</h3>
+    <div class="game-grid" id="emulatorGrid"></div>
+  </section>
+
+  <section id="section-html5">
+    <h3 class="section-title">HTML5 Games</h3>
+    <div class="game-grid" id="html5Grid"></div>
+  </section>
+
+  <section id="section-streaming">
+    <h3 class="section-title">Entertainment / Streaming</h3>
+    <div class="game-grid" id="streamingGrid"></div>
+  </section>
+
+  <section id="section-misc">
+    <h3 class="section-title">Other</h3>
+    <div class="game-grid" id="miscGrid"></div>
+  </section>
 </div>
 
 <div class="game-frame-container" id="gameContainer">
@@ -826,16 +871,6 @@ window.addEventListener('message', function(e) {
 
 <script>
 const links = [
-  {
-    name: "parking game 1",
-    url: "https://1000webgames.com/mobile-10261-park-the-taxi.html",
-    category: "gb"
-  }, 
-  {
-    name: "parking game 2",
-    url: "https://1000webgames.com/mobile-10261-park-the-taxi.html",
-    category: "gb"
-  }, 
   {
     name: "Advance Wars",
     url: "https://itfailedemulator.github.io/launcher.html#advancewars",
@@ -1857,11 +1892,6 @@ const links = [
     category: "html5"
   },
   {
-    name: "Soccer Skills",
-    url: "https://infmapi.github.io/PureProx.github.io/SS.html",
-    category: "html5"
-  },
-  {
     name: "FNAW",
     url: "https://infmapi.github.io/PureProx.github.io/FNAW.html",
     category: "html5"
@@ -1939,11 +1969,6 @@ const links = [
   {
     name: "Offline Paradise",
     url: "https://mountjustin.github.io/offlineparadise.html",
-    category: "html5"
-  },
-  {
-    name: "Elastic Man",
-    url: "https://mountjustin.github.io/elasticman.html",
     category: "html5"
   },
   {
@@ -2379,115 +2404,72 @@ const links = [
     name: "Good Night",
     url: "https://schoolness.onrender.com/projects/goodnight/index.html",
     category: "html5"
+  },
+  {
+    name: "Clash Royale",
+    url: "/emulator_clash.html",
+    category: "streaming"
+  },
+  {
+    name: "YouTube",
+    url: "https://www.youtube.com",
+    category: "streaming"
+  },
+  {
+    name: "Netflix",
+    url: "https://www.netflix.com",
+    category: "streaming"
+  },
+  {
+    name: "Tubi",
+    url: "https://tubitv.com",
+    category: "streaming"
+  },
+  {
+    name: "Hulu",
+    url: "https://www.hulu.com",
+    category: "streaming"
+  },
+  {
+    name: "Disney+",
+    url: "https://www.disneyplus.com",
+    category: "streaming"
+  },
+  {
+    name: "Prime Video",
+    url: "https://www.primevideo.com",
+    category: "streaming"
+  },
+  {
+    name: "HBO Max",
+    url: "https://www.hbomax.com",
+    category: "streaming"
+  },
+  {
+    name: "Peacock",
+    url: "https://www.peacocktv.com",
+    category: "streaming"
+  },
+  {
+    name: "Crunchyroll",
+    url: "https://www.crunchyroll.com",
+    category: "streaming"
   }
 ];
 
 links.push(
   ...[
-    {
-      name: "Metroid Fusion",
-      url: "https://3kh0s.github.io/games/metroid/index.html",
-      category: "gb"
-    },
-    {
-      name: "Super Mario Bros 2",
-      url: "https://3kh0s.github.io/games/supermariobros2/index.html",
-      category: "gb"
-    },
-    {
-      name: "Street Fighter 2",
-      url: "https://3kh0s.github.io/games/streetfighter2/index.html",
-      category: "gb"
-    },
-    {
-      name: "Mario Party DS",
-      url: "https://3kh0s.github.io/games/mariopartyds/index.html",
-      category: "gb"
-    },
-    {
-      name: "Curious Village",
-      url: "https://3kh0s.github.io/games/professorlayton/index.html",
-      category: "gb"
-    },
-    {
-      name: "Scribblenauts",
-      url: "https://3kh0s.github.io/games/scribblenauts/index.html",
-      category: "gb"
-    },
-    {
-      name: "Mario Tennis",
-      url: "https://3kh0s.github.io/games/mariotennis/index.html",
-      category: "gb"
-    },
-    {
-      name: "Megaman Zero",
-      url: "https://3kh0s.github.io/games/megamanzero/index.html",
-      category: "gb"
-    },
-    {
-      name: "Pokemon Mystery Dungeon",
-      url: "https://3kh0s.github.io/games/pokemonmysterydungeon/index.html",
-      category: "gb"
-    },
-    {
-      name: "Pokemon Unbound",
-      url: "https://3kh0s.github.io/games/pokemonunbound/index.html",
-      category: "gb"
-    },
-    {
-      name: "Super Mario Kart",
-      url: "https://3kh0s.github.io/games/supermariokart/index.html",
-      category: "gb"
-    },
-    {
-      name: "Super Mario World",
-      url: "https://3kh0s.github.io/games/supermarioworld/index.html",
-      category: "gb"
-    },
-    {
-      name: "Dr. Mario",
-      url: "https://3kh0s.github.io/games/drmario/index.html",
-      category: "gb"
-    },
-    {
-      name: "castlevania",
-      url: "https://3kh0s.github.io/games/castlevania/index.html",
-      category: "gb"
-    },
-    {
-      name: "Donkey Kong",
-      url: "https://3kh0s.github.io/games/donkeykong/index.html",
-      category: "gb"
-    },
-    {
-      name: "WarioWare",
-      url: "https://3kh0s.github.io/games/warioware/index.html",
-      category: "gb"
-    },
-    {
-      name: "Bomberman",
-      url: "https://3kh0s.github.io/games/bomberman/index.html",
-      category: "gb"
-    },
-    {
-      name: "Ice Climbers",
-      url: "https://3kh0s.github.io/games/iceclimber/index.html",
-      category: "gb"
-    },
-    {
-      name: "Mario Kart Super Circuit",
-      url: "https://3kh0s.github.io/games/mariokartsupercircuit/index.html",
-      category: "gb"
-    },
-    {
-      name: "Mario Kart DS",
-      url: "https://3kh0s.github.io/games/mariokartds/index.html",
-      category: "gb"
-    }
-    // Add all remaining entries similarly...
-    // We are not copying the whole 300+ records in this patch for brevity.
+    { name: "Among Us", url: "https://among-us.online", category: "html5" },
+    { name: "Fall Guys", url: "https://fallguys.io", category: "html5" },
+    { name: "Rocket League", url: "https://playrocketleague.com", category: "html5" },
+    { name: "Fortnite", url: "https://www.epicgames.com/fortnite/en-US/home", category: "html5" },
+    { name: "Genshin Impact", url: "https://genshin.hoyoverse.com/", category: "html5" },
+    { name: "Valorant", url: "https://playvalorant.com", category: "html5" },
+    { name: "Stardew Valley", url: "https://www.stardewvalley.net/", category: "html5" },
+    { name: "Celeste", url: "https://mattmakesgames.itch.io/celesteclassic", category: "html5" },
+    { name: "Hollow Knight", url: "https://www.teamcherry.com.au/hollowknight/", category: "html5" },
+    { name: "Terraria", url: "https://terraria.org/", category: "html5" }
   ].filter(newGame => {
-    // ensure unique by name + url
     const key = newGame.name.toLowerCase() + newGame.url;
     return !links.some(g => g.name.toLowerCase() + g.url === key);
   })
@@ -2596,49 +2578,62 @@ function submitContactForm(event) {
 }
 
 function initGameGrid() {
-  const gameGrid = document.getElementById('gameGrid');
-  gameGrid.innerHTML = '';
-  
-  // Create a map to track games by name
+  // clear all section grids
+  const emulatorGrid = document.getElementById('emulatorGrid');
+  const html5Grid = document.getElementById('html5Grid');
+  const streamingGrid = document.getElementById('streamingGrid');
+  const miscGrid = document.getElementById('miscGrid');
+  [emulatorGrid, html5Grid, streamingGrid, miscGrid].forEach(g => g && (g.innerHTML = ''));
+
+  // Unique by name
   const uniqueGames = new Map();
-  
-  // Only keep the first occurrence of each game name
   links.forEach(game => {
-    if (!uniqueGames.has(game.name)) {
-      uniqueGames.set(game.name, game);
-    }
+    if (!uniqueGames.has(game.name)) uniqueGames.set(game.name, game);
   });
+
+  const placeholderSvg = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjhmZiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiMwMDc3YjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBQcmV2aWV3PC90ZXh0Pjwvc3ZnPg==';
 
   Array.from(uniqueGames.values()).forEach(async game => {
     const card = document.createElement('div');
     card.className = 'game-card';
+    card.style.position = 'relative';
     card.onclick = () => playGame(game.url, game.name);
-    
-    // Extract image URL from the game object, falling back to placeholder if none exists
-    const placeholderSvg = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjhmZiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiMwMDc3YjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBQcmV2aWV3PC90ZXh0Pjwvc3ZnPg==';
-    
+
     let imageUrl = localStorage.getItem(game.name + '_image');
     if (!imageUrl) {
-      imageUrl = await generateGameImage(game.name);
-      if (imageUrl) {
-        localStorage.setItem(game.name + '_image', imageUrl);
-      } else {
-        imageUrl = placeholderSvg;
-      }
+      imageUrl = await generateGameImage(game.name) || placeholderSvg;
+      if (imageUrl) localStorage.setItem(game.name + '_image', imageUrl);
     }
-    
+
     card.innerHTML = `
       <div class="game-preview">
-        <img src="${imageUrl}" 
-             alt="${game.name}" 
-             class="game-image"
-             onerror="this.src='${placeholderSvg}'">
+        <img src="${imageUrl}" alt="${game.name}" class="game-image" onerror="this.src='${placeholderSvg}'">
       </div>
       <div class="game-card-title">${game.name}</div>
+      ${game.category ? `<div class="category-badge">${game.category === 'streaming' ? 'Entertainment' : game.category}</div>` : ''}
     `;
-    
-    gameGrid.appendChild(card);
+
+    // route card into appropriate section
+    const cat = (game.category || '').toLowerCase();
+    if (cat === 'gb' || cat === 'emulator' || game.url.includes('launcher.html')) {
+      emulatorGrid && emulatorGrid.appendChild(card);
+    } else if (cat === 'html5' || /https?:\/\/.+\.(github\.io|glitch\.me|vercel\.app|netlify\.app|itch\.io|expo\.app|play-|buttertoasty|gibbat2)/i.test(game.url)) {
+      html5Grid && html5Grid.appendChild(card);
+    } else if (cat === 'streaming') {
+      streamingGrid && streamingGrid.appendChild(card);
+    } else {
+      miscGrid && miscGrid.appendChild(card);
+    }
   });
+
+  // update counter
+  const total = uniqueGames.size;
+  const shown = (emulatorGrid ? emulatorGrid.children.length : 0)
+              + (html5Grid ? html5Grid.children.length : 0)
+              + (streamingGrid ? streamingGrid.children.length : 0)
+              + (miscGrid ? miscGrid.children.length : 0);
+  const gameCounter = document.getElementById('gameCounter');
+  if (gameCounter) gameCounter.innerHTML = `Showing ${shown} of ${total} games`;
 }
 
 function openInBlank() {
@@ -2680,6 +2675,7 @@ function search() {
   filteredGames.forEach(async game => {
     const card = document.createElement('div');
     card.className = 'game-card';
+    card.style.position = 'relative';
     card.onclick = () => playGame(game.url, game.name);
     
     let imageUrl = localStorage.getItem(game.name + '_image');
@@ -2700,6 +2696,7 @@ function search() {
              onerror="this.src='${placeholderSvg}'">
       </div>
       <div class="game-card-title">${game.name}</div>
+      ${game.category ? `<div class="category-badge">${game.category === 'streaming' ? 'Entertainment' : game.category}</div>` : ''}
     `;
     
     gameGrid.appendChild(card);
@@ -2756,6 +2753,49 @@ function playGame(url, name) {
   const container = document.getElementById('gameContainer');
   const frame = document.getElementById('gameFrame');
   const title = document.getElementById('gameTitle');
+  // If the URL is a known streaming domain or explicitly blocks embedding, prefer safe embed or open new tab
+  const streamingHosts = ['youtube.com','youtu.be','netflix.com','tubitv.com','hulu.com','disneyplus.com','primevideo.com','hbomax.com','peacocktv.com','crunchyroll.com'];
+  try {
+    const parsed = new URL(url, location.href);
+    const host = parsed.hostname.replace('www.','').toLowerCase();
+    // Attempt safe YouTube embed if it's a YouTube link
+    if (host.includes('youtube.com') || host.includes('youtu.be')) {
+      // extract video id from common URL formats
+      let videoId = null;
+      try {
+        if (host.includes('youtu.be')) {
+          videoId = parsed.pathname.slice(1);
+        } else {
+          const params = new URLSearchParams(parsed.search);
+          videoId = params.get('v');
+        }
+      } catch (e) { videoId = null; }
+      if (videoId) {
+        const embedUrl = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?rel=0`;
+        // Try to load standard embed; if embed is blocked the iframe will fail and we fall back to opening in new tab
+        title.textContent = name;
+        frame.onload = function() {
+          const loadingScreen = document.getElementById('loadingScreen');
+          loadingScreen.classList.add('fade-out');
+          setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+        };
+        const loadingScreen = document.getElementById('loadingScreen');
+        loadingScreen.classList.remove('fade-out');
+        loadingScreen.style.display = 'flex';
+        frame.src = embedUrl;
+        container.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        return;
+      }
+    }
+    // For other streaming hosts or if embedding isn't appropriate, open safely in a new tab
+    if (streamingHosts.some(h => host.includes(h))) {
+      window.open(url, '_blank', 'noopener');
+      return;
+    }
+  } catch (e) {
+    console.warn('URL parse failed, loading in iframe as fallback', url, e);
+  }
   title.textContent = name;
   const loadingScreen = document.getElementById('loadingScreen');
   loadingScreen.classList.remove('fade-out');

@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Clash Royale — Playable Emulator Wrapper</title>
+  <style>
+    :root{
+      --bg:#0b0b0b;--surface:#1e1e1e;--accent:#BB86FC;--text:#fff
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
+    .wrapper{height:100%;display:flex;flex-direction:column}
+    .header{height:72px;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.6)}
+    .title{color:var(--accent);font-weight:700}
+    .controls{display:flex;gap:8px;align-items:center}
+    .btn{background:var(--accent);color:#070707;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .content{flex:1;display:flex;align-items:center;justify-content:center;padding:12px;position:relative}
+    .emulator-frame{width:100%;height:100%;border:0;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.6);background:#000}
+    .notice{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,.45);padding:8px 10px;border-radius:8px;color:#ddd;font-size:13px}
+    .uploader{display:flex;gap:8px;align-items:center}
+    .file-label{background:transparent;border:1px dashed rgba(255,255,255,0.12);padding:8px 12px;border-radius:8px;color:#ddd;cursor:pointer}
+    .small{font-size:13px;color:#ccc}
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <div class="title">Clash Royale — Playable Wrapper</div>
+      <div class="controls">
+        <div class="uploader">
+          <label class="file-label" for="fileInput">Choose HTML / ZIP build</label>
+          <input id="fileInput" type="file" accept=".html,.htm,.zip" style="display:none">
+          <button class="btn" id="openUrl">Open URL</button>
+          <button class="btn" id="reload">Reload</button>
+        </div>
+      </div>
+    </div>
+    <div class="content" id="content">
+      <iframe id="emu" src="about:blank" class="emulator-frame" sandbox="allow-forms allow-scripts allow-same-origin allow-popups"></iframe>
+      <div class="notice" id="notice">
+        Tip: To play the real game here, load a playable HTML5 build (single index.html) or a ZIP of a hosted HTML5 build (drag & drop or use Choose). If the original site blocks embedding, use a hosted HTML5 version.
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const emu = document.getElementById('emu');
+    const notice = document.getElementById('notice');
+
+    document.querySelector('.file-label').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', async (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      if (f.name.toLowerCase().endsWith('.zip')) {
+        notice.textContent = 'Unpacking ZIP and loading...';
+        const arrayBuffer = await f.arrayBuffer();
+        const zip = await JSZip.loadAsync(arrayBuffer);
+        // find index.html or first .html
+        const indexName = Object.keys(zip.files).find(n => n.toLowerCase().endsWith('index.html')) || Object.keys(zip.files).find(n => n.toLowerCase().endsWith('.html'));
+        if (!indexName) {
+          notice.textContent = 'No HTML file found in ZIP.';
+          return;
+        }
+        // create blobs for all files so relative resources load via blob URLs
+        const fileEntries = Object.entries(zip.files);
+        const blobUrls = {};
+        for (const [name, entry] of fileEntries) {
+          if (entry.dir) continue;
+          const content = await entry.async('uint8array');
+          const mime = name.toLowerCase().endsWith('.css') ? 'text/css' :
+                       name.toLowerCase().endsWith('.js') ? 'application/javascript' :
+                       name.toLowerCase().endsWith('.html') ? 'text/html' :
+                       name.toLowerCase().endsWith('.png') ? 'image/png' :
+                       name.toLowerCase().endsWith('.jpg') || name.toLowerCase().endsWith('.jpeg') ? 'image/jpeg' :
+                       name.toLowerCase().endsWith('.svg') ? 'image/svg+xml' :
+                       'application/octet-stream';
+          const blob = new Blob([content], { type: mime });
+          blobUrls[name] = URL.createObjectURL(blob);
+        }
+        // load index and rewrite resource links to blob URLs
+        let indexContent = await zip.files[indexName].async('string');
+        // replace src/href references for files present in zip (simple heuristic)
+        for (const name in blobUrls) {
+          const safeName = name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+          const regex = new RegExp(`(["'])${safeName}\\1`, 'g');
+          indexContent = indexContent.replace(regex, `"$${name}$"`);
+        }
+        // now replace placeholders with blob urls
+        for (const name in blobUrls) {
+          indexContent = indexContent.replaceAll(`"$${name}$"`, `"${blobUrls[name]}"`);
+        }
+        // create final blob url and set iframe src
+        const finalBlob = new Blob([indexContent], { type: 'text/html' });
+        const finalUrl = URL.createObjectURL(finalBlob);
+        emu.src = finalUrl;
+        notice.textContent = 'Loaded build from ZIP. If resources look broken, ensure the build was a complete HTML5 export with correct relative paths.';
+      } else if (f.name.toLowerCase().endsWith('.html') || f.name.toLowerCase().endsWith('.htm')) {
+        notice.textContent = 'Loading local HTML file...';
+        const text = await f.text();
+        const blob = new Blob([text], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        emu.src = url;
+        notice.textContent = 'Loaded local HTML file.';
+      } else {
+        notice.textContent = 'Unsupported file type.';
+      }
+    });
+
+    // drag & drop support
+    const content = document.getElementById('content');
+    ['dragenter','dragover'].forEach(evt => content.addEventListener(evt, (e)=>{ e.preventDefault(); content.style.opacity = 0.9; }));
+    ['dragleave','drop'].forEach(evt => content.addEventListener(evt, (e)=>{ e.preventDefault(); content.style.opacity = 1; }));
+    content.addEventListener('drop', (e) => {
+      const f = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f) {
+        fileInput.files = e.dataTransfer.files;
+        fileInput.dispatchEvent(new Event('change'));
+      }
+    });
+
+    document.getElementById('reload').addEventListener('click', () => {
+      emu.contentWindow && emu.contentWindow.location.reload();
+    });
+
+    document.getElementById('openUrl').addEventListener('click', async () => {
+      const url = prompt('Enter URL of a playable HTML5 build (must be CORS/embed-friendly):');
+      if (url) {
+        try {
+          emu.src = url;
+          notice.textContent = 'Loaded URL: ' + url;
+        } catch (err) {
+          notice.textContent = 'Failed to load URL.';
+        }
+      }
+    });
+
+    // notify parent that an emulator build was loaded (main portal can respond)
+    emu.addEventListener('load', () => {
+      try { window.parent.postMessage({ type: 'embedded-emulator-loaded', name: 'Clash Royale (playable build)' }, '*'); } catch(e){}
+    });
+
+    // If page opened inside main portal and parent posts a message with a URL, load it
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'load-emulator-url' && e.data.url) {
+        emu.src = e.data.url;
+      }
+    });
+  </script>
+</body>
+</html>

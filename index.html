@@ -1,3 +1,4 @@
+<html><head><base href="https://example.com/">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -2652,60 +2653,18 @@ function openInBlank() {
 }
 
 function search() {
-  const searchBar = document.getElementById('searchBar');
-  if (!searchBar) return;
-
-  const query = searchBar.value.toLowerCase();
-  
-  const uniqueGames = new Map();
-  links.forEach(game => {
-    if (!uniqueGames.has(game.name)) {
-      uniqueGames.set(game.name, game);
-    }
+  const q = (document.getElementById('searchBar').value || '').trim().toLowerCase();
+  const cards = Array.from(document.querySelectorAll('.game-card'));
+  let shown = 0;
+  cards.forEach(c => {
+    const name = (c.textContent || '').toLowerCase();
+    const visible = q === '' || name.includes(q);
+    c.style.display = visible ? '' : 'none';
+    if (visible) shown++;
   });
-
-  const filteredGames = Array.from(uniqueGames.values())
-    .filter(game => game.name.toLowerCase().includes(query));
-  
-  const gameGrid = document.getElementById('gameGrid');
-  gameGrid.innerHTML = '';
-  
-  const placeholderSvg = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjhmZiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiMwMDc3YjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBQcmV2aWV3PC90ZXh0Pjwvc3ZnPg==';
-  
-  filteredGames.forEach(async game => {
-    const card = document.createElement('div');
-    card.className = 'game-card';
-    card.style.position = 'relative';
-    card.onclick = () => playGame(game.url, game.name);
-    
-    let imageUrl = localStorage.getItem(game.name + '_image');
-    if (!imageUrl) {
-      imageUrl = await generateGameImage(game.name);
-      if (imageUrl) {
-        localStorage.setItem(game.name + '_image', imageUrl);
-      } else {
-        imageUrl = placeholderSvg;
-      }
-    }
-    
-    card.innerHTML = `
-      <div class="game-preview">
-        <img src="${imageUrl}" 
-             alt="${game.name}" 
-             class="game-image"
-             onerror="this.src='${placeholderSvg}'">
-      </div>
-      <div class="game-card-title">${game.name}</div>
-      ${game.category ? `<div class="category-badge">${game.category === 'streaming' ? 'Entertainment' : game.category}</div>` : ''}
-    `;
-    
-    gameGrid.appendChild(card);
-  });
-
+  const total = cards.length;
   const gameCounter = document.getElementById('gameCounter');
-  if (gameCounter) {
-    gameCounter.innerHTML = `Showing ${filteredGames.length} of ${uniqueGames.size} games`;
-  }
+  if (gameCounter) gameCounter.innerHTML = `Showing ${shown} of ${total} games`;
 }
 
 function closePopup() {
